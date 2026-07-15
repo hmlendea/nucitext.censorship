@@ -1,34 +1,19 @@
-[![Donate](https://img.shields.io/badge/-%E2%99%A5%20Donate-%23ff69b4)](https://hmlendea.go.ro/fund.html)
-[![Build Status](https://github.com/hmlendea/nucitext.censorship/actions/workflows/dotnet.yml/badge.svg)](https://github.com/hmlendea/nucitext.censorship/actions/workflows/dotnet.yml)
+[![Donate](https://img.shields.io/badge/-%E2%99%A5%20Donate-%23ff69b4)](https://hmlendea.go.ro/funding)
 [![Latest Release](https://img.shields.io/github/v/release/hmlendea/nucitext.censorship)](https://github.com/hmlendea/nucitext.censorship/releases/latest)
+[![Build Status](https://github.com/hmlendea/nucitext.censorship/actions/workflows/dotnet.yml/badge.svg)](https://github.com/hmlendea/nucitext.censorship/actions/workflows/dotnet.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://gnu.org/licenses/gpl-3.0)
 
 # NuciText.Censorship
 
-## About
+A .NET abstraction package for text censorship, providing a common interface and standardised contract for filtering offensive words and URLs.
 
-NuciText.Censorship is a .NET abstraction package for text censorship.
+## ✨ Features
 
-It provides:
-- A common `ITextCensor` interface for filtering offensive words and URLs
-- A standardised contract for use with dependency injection
-- A foundation for language-specific censorship implementations
+- Common `ITextCensor` interface for filtering offensive words and URLs
+- Standardised contract for use with dependency injection
+- Foundation for language-specific censorship implementations
 
-## Installation
-
-[![Get it from NuGet](https://raw.githubusercontent.com/hmlendea/readme-assets/master/badges/stores/nuget.png)](https://nuget.org/packages/NuciText.Censorship)
-
-### .NET CLI
-```bash
-dotnet add package NuciText.Censorship
-```
-
-### Package Manager
-```powershell
-Install-Package NuciText.Censorship
-```
-
-## Usage
+## 🚀 Usage
 
 Register a concrete `ITextCensor` implementation via dependency injection, then inject and use it where necessary:
 
@@ -51,10 +36,50 @@ public sealed class MessageService
 
 The `Censor` method replaces offensive words and URLs with asterisks.
 
-## Target Framework
+## 📦 Installation
 
-The current package targets `.NET 10.0`.
+[![Get it from NuGet](https://raw.githubusercontent.com/hmlendea/readme-assets/master/badges/stores/nuget.png)](https://nuget.org/packages/NuciText.Censorship)
 
-## License
+### .NET CLI
+
+```bash
+dotnet add package NuciText.Censorship
+```
+
+### Package Manager Console
+
+```powershell
+Install-Package NuciText.Censorship
+```
+
+## 🛠️ Development
+
+### Requirements
+
+- [.NET 10.0 SDK](https://dotnet.microsoft.com/download)
+
+All NuGet dependencies are restored automatically by `dotnet restore`.
+
+### Build
+
+```bash
+dotnet build NuciText.Censorship
+```
+
+## 🤝 Contributing
+
+Contributions are welcome. Please:
+- Keep changes cross-platform
+- Keep the existing public contract intact unless a breaking change is intentional
+- Keep pull requests focused and consistent with the existing code style
+- Update documentation when behaviour changes
+
+## 💬 Support
+
+Found a bug or have a suggestion? [Open an issue](https://github.com/hmlendea/nucitext.censorship/issues)!
+
+If you find this project useful, consider [funding it](https://hmlendea.go.ro/funding) or giving a ⭐️ on GitHub!
+
+## 📄 License
 
 This project is licensed under the `GNU General Public License v3.0` or later. See [LICENSE](./LICENSE) for details.
