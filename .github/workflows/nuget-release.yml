@@ -17,7 +17,7 @@ jobs:
       id-token: write
 
     env:
-      NUGET_PACKAGE_NAME: NuciWeb.HTTP
+      NUGET_PACKAGE_NAME: NuciText.Censorship
 
     steps:
     - uses: actions/checkout@v4
