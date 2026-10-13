@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 using NuciText.Censorship.English;
 
-using Xunit;
+using NUnit.Framework;
 
 namespace NuciText.Censorship.UnitTests;
 
@@ -13,43 +13,45 @@ namespace NuciText.Censorship.UnitTests;
 /// Unit tests for the ITextCensor interface contract.
 /// Tests verify the contract behavior using a test implementation.
 /// </summary>
+[TestFixture]
 public sealed class ITextCensorTests
 {
-    private readonly ITextCensor _censor;
+    private ITextCensor _censor = null!;
 
-    public ITextCensorTests()
+    [SetUp]
+    public void SetUp()
     {
         _censor = new TestTextCensor();
     }
 
-    [Fact]
+    [Test]
     public void Censor_NullInput_ThrowsArgumentNullException()
     {
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => _censor.Censor(null!));
     }
 
-    [Fact]
+    [Test]
     public void Censor_EmptyString_ReturnsEmptyString()
     {
         // Act
         var result = _censor.Censor(string.Empty);
 
         // Assert
-        Assert.Equal(string.Empty, result);
+        Assert.That(result, Is.EqualTo(string.Empty));
     }
 
-    [Fact]
+    [Test]
     public void Censor_WhitespaceOnly_ReturnsWhitespace()
     {
         // Act
         var result = _censor.Censor("   ");
 
         // Assert
-        Assert.Equal("   ", result);
+        Assert.That(result, Is.EqualTo("   "));
     }
 
-    [Fact]
+    [Test]
     public void Censor_NoBadWords_ReturnsOriginalText()
     {
         // Arrange
@@ -59,10 +61,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal(input, result);
+        Assert.That(result, Is.EqualTo(input));
     }
 
-    [Fact]
+    [Test]
     public void Censor_SingleBadWord_ReplacesWithAsterisks()
     {
         // Arrange
@@ -72,10 +74,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("This contains a **** in it.", result);
+        Assert.That(result, Is.EqualTo("This contains a **** in it."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_MultipleBadWords_ReplacesAll()
     {
         // Arrange
@@ -85,10 +87,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("This has **** and **** content.", result);
+        Assert.That(result, Is.EqualTo("This has **** and **** content."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_BadWordAtStart_ReplacesCorrectly()
     {
         // Arrange
@@ -98,10 +100,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("**** is at the start.", result);
+        Assert.That(result, Is.EqualTo("**** is at the start."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_BadWordAtEnd_ReplacesCorrectly()
     {
         // Arrange
@@ -111,10 +113,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("This ends with ****", result);
+        Assert.That(result, Is.EqualTo("This ends with ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_BadWordCaseInsensitive_ReplacesCorrectly()
     {
         // Arrange
@@ -124,10 +126,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("This has **** and **** and ****.", result);
+        Assert.That(result, Is.EqualTo("This has **** and **** and ****."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_BadWordWithPunctuation_ReplacesCorrectly()
     {
         // Arrange
@@ -137,10 +139,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("This has ****! And ****? Also ****.", result);
+        Assert.That(result, Is.EqualTo("This has ****! And ****? Also ****."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_URL_ReplacesWithAsterisks()
     {
         // Arrange
@@ -150,10 +152,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Check out **** for more info.", result);
+        Assert.That(result, Is.EqualTo("Check out **** for more info."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_HTTP_URL_ReplacesWithAsterisks()
     {
         // Arrange
@@ -163,10 +165,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Visit **** now.", result);
+        Assert.That(result, Is.EqualTo("Visit **** now."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_MultipleURLs_ReplacesAll()
     {
         // Arrange
@@ -176,10 +178,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("See **** and ****", result);
+        Assert.That(result, Is.EqualTo("See **** and ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_URLWithPath_ReplacesEntireURL()
     {
         // Arrange
@@ -189,10 +191,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Go to ****", result);
+        Assert.That(result, Is.EqualTo("Go to ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_BadWordAndURL_ReplacesBoth()
     {
         // Arrange
@@ -202,10 +204,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("This **** has **** in it.", result);
+        Assert.That(result, Is.EqualTo("This **** has **** in it."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_UnicodeText_HandlesCorrectly()
     {
         // Arrange
@@ -215,10 +217,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Café has **** and naïve.", result);
+        Assert.That(result, Is.EqualTo("Café has **** and naïve."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_EmojiText_HandlesCorrectly()
     {
         // Arrange
@@ -228,10 +230,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Hello 😀 **** 😀", result);
+        Assert.That(result, Is.EqualTo("Hello 😀 **** 😀"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_LongText_ProcessesCorrectly()
     {
         // Arrange
@@ -241,11 +243,11 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Contains("****", result);
-        Assert.DoesNotContain("badword", result);
+        Assert.That(result, Does.Contain("****"));
+        Assert.That(result, Does.Not.Contain("badword"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_RepeatedBadWords_ReplacesAllOccurrences()
     {
         // Arrange
@@ -255,10 +257,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("**** **** ****", result);
+        Assert.That(result, Is.EqualTo("**** **** ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_BadWordAsSubstring_NotReplaced()
     {
         // Arrange
@@ -268,10 +270,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("This is notbadword but **** is here.", result);
+        Assert.That(result, Is.EqualTo("This is notbadword but **** is here."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_CustomBadWords_UsesCustomList()
     {
         // Arrange
@@ -282,10 +284,10 @@ public sealed class ITextCensorTests
         var result = customCensor.Censor(input);
 
         // Assert
-        Assert.Equal("This has **** and **** in it.", result);
+        Assert.That(result, Is.EqualTo("This has **** and **** in it."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_CustomReplacement_UsesCustomReplacement()
     {
         // Arrange
@@ -296,10 +298,10 @@ public sealed class ITextCensorTests
         var result = customCensor.Censor(input);
 
         // Assert
-        Assert.Equal("This has [CENSORED] in it.", result);
+        Assert.That(result, Is.EqualTo("This has [CENSORED] in it."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_NewlinesAndTabs_PreservesFormatting()
     {
         // Arrange
@@ -309,10 +311,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Line 1\nLine 2\t****\nLine 3", result);
+        Assert.That(result, Is.EqualTo("Line 1\nLine 2\t****\nLine 3"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_NumbersAndSpecialChars_PreservesThem()
     {
         // Arrange
@@ -322,10 +324,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Price: $100.50, 123 **** 456!", result);
+        Assert.That(result, Is.EqualTo("Price: $100.50, 123 **** 456!"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_EmailAddresses_NotReplaced()
     {
         // Arrange
@@ -335,10 +337,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Contact me at user@example.com", result);
+        Assert.That(result, Is.EqualTo("Contact me at user@example.com"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_IPAddresses_NotReplaced()
     {
         // Arrange
@@ -348,10 +350,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Server at 192.168.1.1", result);
+        Assert.That(result, Is.EqualTo("Server at 192.168.1.1"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_MixedCaseURL_ReplacesCorrectly()
     {
         // Arrange
@@ -361,10 +363,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Visit ****", result);
+        Assert.That(result, Is.EqualTo("Visit ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_URLWithPort_ReplacesCorrectly()
     {
         // Arrange
@@ -374,10 +376,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Connect to ****", result);
+        Assert.That(result, Is.EqualTo("Connect to ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_Contract_ReturnsString()
     {
         // Arrange
@@ -387,10 +389,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.IsType<string>(result);
+        Assert.That(result, Is.InstanceOf<string>());
     }
 
-    [Fact]
+    [Test]
     public void Censor_Contract_NeverReturnsNull()
     {
         // Arrange
@@ -400,10 +402,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.NotNull(result);
+        Assert.That(result, Is.Not.Null);
     }
 
-    [Fact]
+    [Test]
     public void Censor_URLWithAuth_ReplacesCorrectly()
     {
         // Arrange
@@ -413,10 +415,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Visit ****", result);
+        Assert.That(result, Is.EqualTo("Visit ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_URLWithFragment_ReplacesCorrectly()
     {
         // Arrange
@@ -426,10 +428,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("See ****", result);
+        Assert.That(result, Is.EqualTo("See ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_URLWithQueryAndFragment_ReplacesCorrectly()
     {
         // Arrange
@@ -439,10 +441,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Go to ****", result);
+        Assert.That(result, Is.EqualTo("Go to ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_IPv6URL_ReplacesCorrectly()
     {
         // Arrange
@@ -452,10 +454,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Connect to ****", result);
+        Assert.That(result, Is.EqualTo("Connect to ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_IDNDomain_ReplacesCorrectly()
     {
         // Arrange
@@ -465,10 +467,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Visit ****", result);
+        Assert.That(result, Is.EqualTo("Visit ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_BadWordWithRegexMetacharacters_HandledCorrectly()
     {
         // Arrange
@@ -479,10 +481,10 @@ public sealed class ITextCensorTests
         var result = customCensor.Censor(input);
 
         // Assert
-        Assert.Equal("This has **** and **** in it.", result);
+        Assert.That(result, Is.EqualTo("This has **** and **** in it."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_OverlappingBadWords_ReplacesAll()
     {
         // Arrange
@@ -493,10 +495,10 @@ public sealed class ITextCensorTests
         var result = customCensor.Censor(input);
 
         // Assert
-        Assert.Equal("This has **** and **** in it.", result);
+        Assert.That(result, Is.EqualTo("This has **** and **** in it."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_VeryLongURL_ProcessesCorrectly()
     {
         // Arrange
@@ -507,10 +509,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Visit ****", result);
+        Assert.That(result, Is.EqualTo("Visit ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_MultipleSpaces_PreservesSpacing()
     {
         // Arrange
@@ -520,10 +522,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("This  has   ****    here", result);
+        Assert.That(result, Is.EqualTo("This  has   ****    here"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_TabAndNewlineInURL_StopsAtWhitespace()
     {
         // Arrange
@@ -533,10 +535,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Visit ****\nNext line", result);
+        Assert.That(result, Is.EqualTo("Visit ****\nNext line"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_CaseInsensitiveURLScheme_ReplacesCorrectly()
     {
         // Arrange
@@ -546,10 +548,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Visit **** and ****", result);
+        Assert.That(result, Is.EqualTo("Visit **** and ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_EmptyBadWordsList_OnlyReplacesURLs()
     {
         // Arrange
@@ -560,10 +562,10 @@ public sealed class ITextCensorTests
         var result = customCensor.Censor(input);
 
         // Assert
-        Assert.Equal("This has badword and ****", result);
+        Assert.That(result, Is.EqualTo("This has badword and ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_NullBadWordsList_UsesDefaults()
     {
         // Arrange
@@ -574,10 +576,10 @@ public sealed class ITextCensorTests
         var result = customCensor.Censor(input);
 
         // Assert
-        Assert.Equal("This has **** in it.", result);
+        Assert.That(result, Is.EqualTo("This has **** in it."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_ReplacementWithSpecialChars_WorksCorrectly()
     {
         // Arrange
@@ -588,10 +590,10 @@ public sealed class ITextCensorTests
         var result = customCensor.Censor(input);
 
         // Assert
-        Assert.Equal("This has [***].", result);
+        Assert.That(result, Is.EqualTo("This has [***]."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_ReplacementEmptyString_RemovesBadWords()
     {
         // Arrange
@@ -602,10 +604,10 @@ public sealed class ITextCensorTests
         var result = customCensor.Censor(input);
 
         // Assert
-        Assert.Equal("This has  here.", result);
+        Assert.That(result, Is.EqualTo("This has  here."));
     }
 
-    [Fact]
+    [Test]
     public void Censor_URLAtStartOfText_ReplacesCorrectly()
     {
         // Arrange
@@ -615,10 +617,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("**** is the site", result);
+        Assert.That(result, Is.EqualTo("**** is the site"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_URLAtEndOfText_ReplacesCorrectly()
     {
         // Arrange
@@ -628,10 +630,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("Visit ****", result);
+        Assert.That(result, Is.EqualTo("Visit ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_OnlyBadWords_ReturnsOnlyReplacements()
     {
         // Arrange
@@ -641,10 +643,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("**** **** ****", result);
+        Assert.That(result, Is.EqualTo("**** **** ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_OnlyURLs_ReturnsOnlyReplacements()
     {
         // Arrange
@@ -654,10 +656,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("**** ****", result);
+        Assert.That(result, Is.EqualTo("**** ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_MixedScriptText_HandlesCorrectly()
     {
         // Arrange
@@ -667,10 +669,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("English **** 中文 русский", result);
+        Assert.That(result, Is.EqualTo("English **** 中文 русский"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_RightToLeftText_HandlesCorrectly()
     {
         // Arrange
@@ -680,10 +682,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("English **** עברית", result);
+        Assert.That(result, Is.EqualTo("English **** עברית"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_ZeroWidthCharacters_Preserved()
     {
         // Arrange
@@ -693,10 +695,10 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("bad\u200Bword ****", result);
+        Assert.That(result, Is.EqualTo("bad\u200Bword ****"));
     }
 
-    [Fact]
+    [Test]
     public void Censor_SurrogatePairs_HandledCorrectly()
     {
         // Arrange
@@ -706,6 +708,6 @@ public sealed class ITextCensorTests
         var result = _censor.Censor(input);
 
         // Assert
-        Assert.Equal("😀 **** 😀", result);
+        Assert.That(result, Is.EqualTo("😀 **** 😀"));
     }
 }
