@@ -402,4 +402,310 @@ public sealed class ITextCensorTests
         // Assert
         Assert.NotNull(result);
     }
+
+    [Fact]
+    public void Censor_URLWithAuth_ReplacesCorrectly()
+    {
+        // Arrange
+        var input = "Visit http://user:pass@example.com";
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("Visit ****", result);
+    }
+
+    [Fact]
+    public void Censor_URLWithFragment_ReplacesCorrectly()
+    {
+        // Arrange
+        var input = "See https://example.com/page#section";
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("See ****", result);
+    }
+
+    [Fact]
+    public void Censor_URLWithQueryAndFragment_ReplacesCorrectly()
+    {
+        // Arrange
+        var input = "Go to https://example.com/path?query=value#fragment";
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("Go to ****", result);
+    }
+
+    [Fact]
+    public void Censor_IPv6URL_ReplacesCorrectly()
+    {
+        // Arrange
+        var input = "Connect to http://[::1]:8080";
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("Connect to ****", result);
+    }
+
+    [Fact]
+    public void Censor_IDNDomain_ReplacesCorrectly()
+    {
+        // Arrange
+        var input = "Visit https://münchen.de";
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("Visit ****", result);
+    }
+
+    [Fact]
+    public void Censor_BadWordWithRegexMetacharacters_HandledCorrectly()
+    {
+        // Arrange
+        var customCensor = new TestTextCensor(["test.word", "badword"]);
+        var input = "This has test.word and badword in it.";
+
+        // Act
+        var result = customCensor.Censor(input);
+
+        // Assert
+        Assert.Equal("This has **** and **** in it.", result);
+    }
+
+    [Fact]
+    public void Censor_OverlappingBadWords_ReplacesAll()
+    {
+        // Arrange
+        var customCensor = new TestTextCensor(["badword", "word"]);
+        var input = "This has badword and word in it.";
+
+        // Act
+        var result = customCensor.Censor(input);
+
+        // Assert
+        Assert.Equal("This has **** and **** in it.", result);
+    }
+
+    [Fact]
+    public void Censor_VeryLongURL_ProcessesCorrectly()
+    {
+        // Arrange
+        var longPath = string.Join("/", Enumerable.Repeat("path", 100));
+        var input = $"Visit https://example.com/{longPath}";
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("Visit ****", result);
+    }
+
+    [Fact]
+    public void Censor_MultipleSpaces_PreservesSpacing()
+    {
+        // Arrange
+        var input = "This  has   badword    here";
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("This  has   ****    here", result);
+    }
+
+    [Fact]
+    public void Censor_TabAndNewlineInURL_StopsAtWhitespace()
+    {
+        // Arrange
+        var input = "Visit https://example.com/path\nNext line";
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("Visit ****\nNext line", result);
+    }
+
+    [Fact]
+    public void Censor_CaseInsensitiveURLScheme_ReplacesCorrectly()
+    {
+        // Arrange
+        var input = "Visit HTTP://example.com and HttPs://test.org";
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("Visit **** and ****", result);
+    }
+
+    [Fact]
+    public void Censor_EmptyBadWordsList_OnlyReplacesURLs()
+    {
+        // Arrange
+        var customCensor = new TestTextCensor([]);
+        var input = "This has badword and https://example.com";
+
+        // Act
+        var result = customCensor.Censor(input);
+
+        // Assert
+        Assert.Equal("This has badword and ****", result);
+    }
+
+    [Fact]
+    public void Censor_NullBadWordsList_UsesDefaults()
+    {
+        // Arrange
+        var customCensor = new TestTextCensor(null);
+        var input = "This has badword in it.";
+
+        // Act
+        var result = customCensor.Censor(input);
+
+        // Assert
+        Assert.Equal("This has **** in it.", result);
+    }
+
+    [Fact]
+    public void Censor_ReplacementWithSpecialChars_WorksCorrectly()
+    {
+        // Arrange
+        var customCensor = new TestTextCensor(replacement: "[***]");
+        var input = "This has badword.";
+
+        // Act
+        var result = customCensor.Censor(input);
+
+        // Assert
+        Assert.Equal("This has [***].", result);
+    }
+
+    [Fact]
+    public void Censor_ReplacementEmptyString_RemovesBadWords()
+    {
+        // Arrange
+        var customCensor = new TestTextCensor(replacement: "");
+        var input = "This has badword here.";
+
+        // Act
+        var result = customCensor.Censor(input);
+
+        // Assert
+        Assert.Equal("This has  here.", result);
+    }
+
+    [Fact]
+    public void Censor_URLAtStartOfText_ReplacesCorrectly()
+    {
+        // Arrange
+        var input = "https://example.com is the site";
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("**** is the site", result);
+    }
+
+    [Fact]
+    public void Censor_URLAtEndOfText_ReplacesCorrectly()
+    {
+        // Arrange
+        var input = "Visit https://example.com";
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("Visit ****", result);
+    }
+
+    [Fact]
+    public void Censor_OnlyBadWords_ReturnsOnlyReplacements()
+    {
+        // Arrange
+        var input = "badword offensive profanity";
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("**** **** ****", result);
+    }
+
+    [Fact]
+    public void Censor_OnlyURLs_ReturnsOnlyReplacements()
+    {
+        // Arrange
+        var input = "https://a.com http://b.org";
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("**** ****", result);
+    }
+
+    [Fact]
+    public void Censor_MixedScriptText_HandlesCorrectly()
+    {
+        // Arrange
+        var input = "English badword 中文 русский";
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("English **** 中文 русский", result);
+    }
+
+    [Fact]
+    public void Censor_RightToLeftText_HandlesCorrectly()
+    {
+        // Arrange
+        var input = "English badword עברית";
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("English **** עברית", result);
+    }
+
+    [Fact]
+    public void Censor_ZeroWidthCharacters_Preserved()
+    {
+        // Arrange
+        var input = "bad\u200Bword badword"; // zero-width space in first
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("bad\u200Bword ****", result);
+    }
+
+    [Fact]
+    public void Censor_SurrogatePairs_HandledCorrectly()
+    {
+        // Arrange
+        var input = "😀 badword 😀"; // emoji are surrogate pairs in UTF-16
+
+        // Act
+        var result = _censor.Censor(input);
+
+        // Assert
+        Assert.Equal("😀 **** 😀", result);
+    }
 }
