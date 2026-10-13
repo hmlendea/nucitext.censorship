@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="NuciText.Censorship.UnitTests/NuciText.Censorship.UnitTests.csproj" />
   <Project Path="NuciText.Censorship/NuciText.Censorship.csproj" />
 </Solution>
