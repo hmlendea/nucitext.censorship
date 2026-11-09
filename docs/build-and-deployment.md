@@ -20,14 +20,18 @@ dotnet restore
 
 ## CI/CD
 
-The repository uses GitHub Actions for continuous integration. The workflow is defined in [`.github/workflows/dotnet.yml`](../../.github/workflows/dotnet.yml).
+The repository uses GitHub Actions for continuous integration and security scanning.
 
-### Workflow triggers
+### Continuous Integration
+
+The CI workflow is defined in [`.github/workflows/dotnet.yml`](../../.github/workflows/dotnet.yml).
+
+#### Workflow triggers
 
 - Push to `master` branch.
 - Pull request to `master` branch.
 
-### Workflow steps
+#### Workflow steps
 
 1. Checkout source code.
 2. Setup .NET 10.0.x.
@@ -35,9 +39,33 @@ The repository uses GitHub Actions for continuous integration. The workflow is d
 4. Build (`dotnet build --no-restore`).
 5. Test (`dotnet test --no-build --verbosity normal`).
 
-### Build status
+#### Build status
 
 [![Build Status](https://github.com/hmlendea/nucitext.censorship/actions/workflows/dotnet.yml/badge.svg)](https://github.com/hmlendea/nucitext.censorship/actions/workflows/dotnet.yml)
+
+### Security Scanning
+
+The security scanning workflow is defined in [`.github/workflows/security.yml`](../../.github/workflows/security.yml).
+
+#### Workflow triggers
+
+- Push to `master` branch.
+- Pull request to `master` branch.
+- Weekly schedule (Sunday 00:00 UTC).
+
+#### Workflow steps
+
+1. Checkout source code.
+2. Setup .NET 10.0.x.
+3. Restore dependencies (`dotnet restore`).
+4. Check for vulnerable packages (`dotnet list package --vulnerable --include-transitive`).
+5. Initialize CodeQL analysis for C#.
+6. Build (`dotnet build --no-restore`).
+7. Perform CodeQL analysis and upload results.
+
+#### Security scan status
+
+[![Security Scan](https://github.com/hmlendea/nucitext.censorship/actions/workflows/security.yml/badge.svg)](https://github.com/hmlendea/nucitext.censorship/actions/workflows/security.yml)
 
 ## Deployment
 

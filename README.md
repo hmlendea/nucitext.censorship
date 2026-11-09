@@ -130,6 +130,7 @@ Full documentation is available in the `docs/` directory.
 | Workflow | Purpose | What it does |
 |----------|---------|--------------|
 | [dotnet.yml](https://github.com/hmlendea/nucitext.censorship/blob/master/.github/workflows/dotnet.yml) | Continuous integration | Restores, builds, and tests on every push and PR to master |
+| [security.yml](https://github.com/hmlendea/nucitext.censorship/blob/master/.github/workflows/security.yml) | Security scanning | Checks for vulnerable packages and runs CodeQL analysis on push, PR, and weekly schedule |
 
 ## 🏷️ Versioning
 
