@@ -85,14 +85,15 @@ namespace NuciText.Censorship.ArchitectureTests
 
         private static bool IsTestDependency(string? reference)
             => reference is not null &&
-                (reference.Contains("Tests", StringComparison.OrdinalIgnoreCase) ||
-                 reference.Contains("NUnit", StringComparison.OrdinalIgnoreCase) ||
-                 reference.Contains("Moq", StringComparison.OrdinalIgnoreCase) ||
-                 reference.Contains(
-                     "ArchUnit",
-                     StringComparison.OrdinalIgnoreCase) ||
-                 reference.Contains("Test.Sdk", StringComparison.OrdinalIgnoreCase) ||
-                 reference.Contains("testhost", StringComparison.OrdinalIgnoreCase) ||
-                 reference.Contains("coverlet", StringComparison.OrdinalIgnoreCase));
+                IsTestDependencyName(reference);
+
+        private static bool IsTestDependencyName(string reference)
+            => reference.Contains("Tests", StringComparison.OrdinalIgnoreCase) ||
+                reference.Contains("NUnit", StringComparison.OrdinalIgnoreCase) ||
+                reference.Contains("Moq", StringComparison.OrdinalIgnoreCase) ||
+                reference.Contains("ArchUnit", StringComparison.OrdinalIgnoreCase) ||
+                reference.Contains("Test.Sdk", StringComparison.OrdinalIgnoreCase) ||
+                reference.Contains("testhost", StringComparison.OrdinalIgnoreCase) ||
+                reference.Contains("coverlet", StringComparison.OrdinalIgnoreCase);
     }
 }

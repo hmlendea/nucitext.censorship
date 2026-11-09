@@ -8,6 +8,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <ExcludeFromCodeCoverage>true</ExcludeFromCodeCoverage>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
@@ -28,6 +29,8 @@
 
   <ItemGroup>
     <None Include="../NuciText.Censorship/NuciText.Censorship.csproj" Link="ProductionProjects/NuciText.Censorship.csproj" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="NuciText.Censorship.ArchitectureTests.csproj" Link="TestProjects/NuciText.Censorship.ArchitectureTests.csproj" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../NuciText.Censorship.slnx" Link="Solution/NuciText.Censorship.slnx" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <Target Name="GenerateArchitecturePaths" BeforeTargets="CoreCompile">
