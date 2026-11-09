@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>NuciText.Censorship.ArchitectureTests</RootNamespace>
+    <AssemblyName>NuciText.Censorship.ArchitectureTests</AssemblyName>
+    <Version>1.0.0</Version>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <IsTestProject>true</IsTestProject>
+    <ExcludeFromCodeCoverage>true</ExcludeFromCodeCoverage>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <ArchitectureProductionSourceRoot>$(MSBuildProjectDirectory)/../NuciText.Censorship</ArchitectureProductionSourceRoot>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageReference Include="NUnit" Version="5.0.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="6.3.1" />
+    <PackageReference Include="TngTech.ArchUnitNET.NUnit" Version="0.13.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../NuciText.Censorship/NuciText.Censorship.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../NuciText.Censorship/NuciText.Censorship.csproj" Link="ProductionProjects/NuciText.Censorship.csproj" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <Target Name="GenerateArchitecturePaths" BeforeTargets="CoreCompile">
+    <WriteLinesToFile
+      File="$(IntermediateOutputPath)ArchitecturePaths.g.cs"
+      Lines="namespace NuciText.Censorship.ArchitectureTests { internal static class ArchitecturePaths { internal const string ProductionSourceRoot = &quot;$(ArchitectureProductionSourceRoot.Replace('\', '/'))&quot;%3B } }"
+      Overwrite="true"
+      Encoding="UTF-8" />
+    <ItemGroup>
+      <Compile Include="$(IntermediateOutputPath)ArchitecturePaths.g.cs" />
+    </ItemGroup>
+  </Target>
+
+</Project>
